@@ -14,8 +14,6 @@
 		1D1953B02D56CD8E00460186 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D1953AF2D56CD8B00460186 /* NetworkManager.swift */; };
 		1D1953B32D56CF9800460186 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D1953B22D56CF9400460186 /* SearchView.swift */; };
 		1D1953B52D56DFCA00460186 /* CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D1953B42D56DFC500460186 /* CollectionView.swift */; };
-		1D1953B82D56E3C700460186 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 1D1953B72D56E3C700460186 /* RealmSwift */; };
-		1D1953B92D56E3D300460186 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 1D1953B72D56E3C700460186 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		1D1953BE2D56EE6E00460186 /* SearchResponce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D1953BD2D56EE6900460186 /* SearchResponce.swift */; };
 		1D1953C02D56F50600460186 /* RepoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D1953BF2D56F50300460186 /* RepoModel.swift */; };
 		1D1CD8992D5C8F23006F8CFB /* UserResponce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D1CD8982D5C8F18006F8CFB /* UserResponce.swift */; };
@@ -50,7 +48,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				1D1953B92D56E3D300460186 /* RealmSwift in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -98,7 +95,6 @@
 			files = (
 				B5C0A3CF2D70AB4300BBB1A0 /* Sharing in Frameworks */,
 				B5C0A3CC2D70AB3D00BBB1A0 /* ComposableArchitecture in Frameworks */,
-				1D1953B82D56E3C700460186 /* RealmSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -288,7 +284,6 @@
 			);
 			name = LegionTest;
 			packageProductDependencies = (
-				1D1953B72D56E3C700460186 /* RealmSwift */,
 				B5C0A3CB2D70AB3D00BBB1A0 /* ComposableArchitecture */,
 				B5C0A3CE2D70AB4300BBB1A0 /* Sharing */,
 			);
@@ -321,7 +316,6 @@
 			mainGroup = 1D19537C2D56C74200460186;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				1D1953B62D56E3C700460186 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				B5C0A3CA2D70AB3D00BBB1A0 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 				B5C0A3CD2D70AB4300BBB1A0 /* XCRemoteSwiftPackageReference "swift-sharing" */,
 			);
@@ -593,14 +587,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		1D1953B62D56E3C700460186 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/realm/realm-swift";
-			requirement = {
-				branch = community;
-				kind = branch;
-			};
-		};
 		B5C0A3CA2D70AB3D00BBB1A0 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture";
@@ -620,11 +606,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		1D1953B72D56E3C700460186 /* RealmSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 1D1953B62D56E3C700460186 /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = RealmSwift;
-		};
 		B5C0A3CB2D70AB3D00BBB1A0 /* ComposableArchitecture */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B5C0A3CA2D70AB3D00BBB1A0 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
