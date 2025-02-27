@@ -1,53 +1,55 @@
 import SwiftUI
+import ComposableArchitecture
 
-struct FavoritesView<ViewModel>: View where ViewModel: FavoritesViewModelProtocol & CollectionDelegate {
-    @StateObject var viewModel: ViewModel
+struct FavoritesView: View {
+    @Perception.Bindable var store: StoreOf<FavoritesReducer>
     
-    @State private var nothingFoundText: String = "Nothing found :("
-    @State private var isNotingFoundTextVisible: Bool = true
-    
-    // MARK: - View
+    // MARK: - Body
     var body: some View {
-        ZStack {
-            // Background
-            Color.tBlack.edgesIgnoringSafeArea(.all)
-            
-            VStack {
-                // Collection
-                CollectionView(items: viewModel.items, delegate: viewModel)
+        WithPerceptionTracking {
+            ZStack {
+                // Background
+                Color.tBlack.edgesIgnoringSafeArea(.all)
+                
+                VStack {
+                    // Collection
+                    CollectionView(
+                        items: store.items,
+                        presentDetails: { model in
+                            store.send(.ui(.onCellTapped(model)))
+                        }
+                    )
                     .foregroundStyle(.white)
                     .padding(.horizontal, 20)
                     .padding(.top, 20)
                     .frame(maxHeight: .infinity)
-                    .onChange(of: viewModel.items) { items in
-                        
-                        switch items.isEmpty {
-                        case true:
-                            isNotingFoundTextVisible = true
-                        case false:
-                            isNotingFoundTextVisible = false
-                        }
+                } /// VStack
+                
+                Group {
+                    switch store.screenState {
+                    case .empty:
+                        Text(store.notificationText)
+                            .font(.system(size: 30, weight: .bold))
+                            .lineLimit(2)
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 20)
+                            .transition(.opacity)
+                    case .favorites:
+                        EmptyView()
                     }
-            } /// VStack
-            
-            // NothingFound Text
-            if isNotingFoundTextVisible {
-                Text(nothingFoundText)
-                    .font(.system(size: 30, weight: .bold))
-                    .lineLimit(2)
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 20)
-                    .transition(.opacity)
+                }
+            } /// ZStack
+            .onAppear {
+                store.send(.ui(.onAppear))
             }
-        } /// ZStack
-        .onAppear {
-            viewModel.getSavedRepos()
-        }
+        } /// WithPerceptionTracking
     }
 }
 
 #Preview {
-    FavoritesView(viewModel: FavoritesViewModel(dataManager: RealmManager(), navigation: NavigationManager()))
+    FavoritesView(store: Store(initialState: FavoritesReducer.State(), reducer: {
+        FavoritesReducer()
+    }))
 }

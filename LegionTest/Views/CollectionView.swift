@@ -1,15 +1,11 @@
 import SwiftUI
-
-// MARK: - CollectionDelegate
-protocol CollectionDelegate: AnyObject {
-    func didDisplayCell(at index: Int)
-    func presentDetails(for model: RepoModel)
-}
+import ComposableArchitecture
 
 // MARK: - CollectionView
 struct CollectionView: View {
     var items: [RepoModel]
-    var delegate: (any CollectionDelegate)?
+    var didDisplayCell: ((Int) -> Void)?
+    var presentDetails: ((RepoModel) -> Void)?
     
     let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 4),
@@ -18,48 +14,49 @@ struct CollectionView: View {
     
     let fixedCellHeight: CGFloat = 60
     
-    // MARK: - View
+    // MARK: - Body
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            LazyVGrid(columns: columns, spacing: 8) {
-                ForEach(items, id: \.self) { item in
-                    VStack {
-                        Text("\(item.name)")
-                            .font(.system(size: 13, weight: .bold))
-                            .lineLimit(2)
-                            .foregroundStyle(.white)
-                            .frame(height: 40)
-                            .frame(maxWidth: .infinity)
-                            .multilineTextAlignment(.center)
-                        Text("\(item.fullName)")
-                            .font(.footnote)
-                            .lineLimit(1)
-                            .foregroundStyle(.white)
-                            .frame(maxWidth: .infinity)
-                            .multilineTextAlignment(.center)
-                            .padding(.top, -10)
-                            .padding(.bottom, 10)
+        WithPerceptionTracking {
+            ScrollView(showsIndicators: false) {
+                LazyVGrid(columns: columns, spacing: 8) {
+                    ForEach(items, id: \.self) { item in
+                        VStack {
+                            Text("\(item.name)")
+                                .font(.system(size: 13, weight: .bold))
+                                .lineLimit(2)
+                                .foregroundStyle(.white)
+                                .frame(height: 40)
+                                .frame(maxWidth: .infinity)
+                                .multilineTextAlignment(.center)
+                            Text("\(item.fullName)")
+                                .font(.footnote)
+                                .lineLimit(1)
+                                .foregroundStyle(.white)
+                                .frame(maxWidth: .infinity)
+                                .multilineTextAlignment(.center)
+                                .padding(.top, -10)
+                                .padding(.bottom, 10)
+                        }
+                        .background(Color.tBlackLight)
+                        .cornerRadius(10)
+                        .frame(height: fixedCellHeight)
+                        .onAppear {
+                            guard let index = items.firstIndex(where: { $0 == item }) else { return }
+                            didDisplayCell?(index)
+                        }
+                        .onTapGesture {
+                            presentDetails?(item)
+                        }
                     }
-                    .background(Color.tBlackLight)
-                    .cornerRadius(10)
-                    .frame(height: fixedCellHeight)
-                    .onAppear {
-                        guard let index = items.firstIndex(where: { $0 == item }) else { return }
-                        
-                        delegate?.didDisplayCell(at: index)
-                    }
-                    .onTapGesture {
-                        delegate?.presentDetails(for: item)
-                    }
-                }
-            } /// LazyVGrid
-            .foregroundStyle(.clear)
-            .padding(.top, 2)
-        } /// ScrollView
+                } /// LazyVGrid
+                .foregroundStyle(.clear)
+                .padding(.top, 2)
+            } /// ScrollView
+        }
     }
 }
 
 #Preview {
     @State var items = [RepoModel(nextUrl: nil, lastUrl: nil, id: 12, name: "Some123213213213213123123", fullName: "Some", owner: .init(id: 312321), description: nil), RepoModel(nextUrl: nil, lastUrl: nil, id: 123, name: "Some", fullName: "Some", owner: .init(id: 23123123), description: nil)]
-    CollectionView(items: items, delegate: nil)
+    CollectionView(items: items)
 }

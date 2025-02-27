@@ -1,57 +1,56 @@
 import SwiftUI
+import ComposableArchitecture
 
-struct ListView<ViewModel>: View where ViewModel: ListViewModelProtocol & CollectionDelegate {
-    @StateObject var viewModel: ViewModel
+struct ListView: View {
+    @Perception.Bindable var store: StoreOf<ListReducer>
+    @State var isTextFieldFocused: Bool = false
     
-    @State private var searchText: String = ""
-    @State private var nothingFoundText: String = "Type something to search in repositories"
-    @State private var isNotingFoundTextVisible: Bool = true
-    
-    // MARK: - View
+    // MARK: - Body
     var body: some View {
-        ZStack {
-            // Background
-            Color.tBlack.edgesIgnoringSafeArea(.all)
-            
-            VStack {
-                // Search
-                SearchView(text: $searchText)
-                    .padding(.top, 20)
-                    .onChange(of: searchText) { newSearchText in
-                        if newSearchText.isEmpty {
-                            nothingFoundText = "Type something to search in repositories"
-                        }
-                        
-                        Task(priority: .userInitiated) {
-                            await viewModel.search(with: newSearchText)
-                        }
-                    }
+        WithPerceptionTracking {
+            ZStack {
+                // Background
+                Color.tBlack.edgesIgnoringSafeArea(.all)
                 
-                // Collection
-                CollectionView(items: viewModel.items, delegate: viewModel)
+                VStack {
+                    HStack {
+                        // Search
+                        SearchView(
+                            text: $store.searchedText,
+                            textFieldFocusing: {
+                                isTextFieldFocused = $0
+                            }
+                        )
+                        .padding(.top, 20)
+                        
+                        if isTextFieldFocused {
+                            Button {
+                                store.send(.ui(.onSearchButtonTapped))
+                                hideKeyboard()
+                            } label: {
+                                Text("Search")
+                            }
+                            .foregroundStyle(.white)
+                            .padding([.top, .trailing], 20)
+                        }
+                    } /// HStack
+                    
+                    // Collection
+                    CollectionView(
+                        items: store.items,
+                        didDisplayCell: { index in
+                            store.send(.ui(.onScrollToBottomSearch(index)))
+                        }, presentDetails: { model in
+                            store.send(.ui(.onCellTapped(model)))
+                        }
+                    )
                     .foregroundStyle(.white)
                     .padding(.horizontal, 20)
                     .padding(.top, 20)
                     .frame(maxHeight: .infinity)
-                    .onChange(of: viewModel.items) { items in
-                        
-                        switch items.isEmpty {
-                        case true:
-                            isNotingFoundTextVisible = true
-                            if searchText.isEmpty {
-                                nothingFoundText = "Type something to search in repositories"
-                            } else {
-                                nothingFoundText = "Nothing found :("
-                            }
-                        case false:
-                            isNotingFoundTextVisible = false
-                        }
-                    }
-            } /// VStack
-            
-            // NothingFound Text
-            if isNotingFoundTextVisible {
-                Text(nothingFoundText)
+                } /// VStack
+                
+                Text(store.notificationText)
                     .font(.system(size: 30, weight: .bold))
                     .lineLimit(2)
                     .foregroundStyle(.white)
@@ -59,18 +58,22 @@ struct ListView<ViewModel>: View where ViewModel: ListViewModelProtocol & Collec
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 20)
                     .transition(.opacity)
-            }
-            
-            // ProgressView
-            if viewModel.isLoading {
-                Color.black.opacity(0.5)
-                    .edgesIgnoringSafeArea(.all)
-
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                    .scaleEffect(2)
-            }
-        } /// ZStack
+                
+                Group {
+                    switch store.screenState {
+                    case .loading:
+                        Color.black.opacity(0.5)
+                            .edgesIgnoringSafeArea(.all)
+                        
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            .scaleEffect(2)
+                    case _:
+                        EmptyView()
+                    }
+                }
+            } /// ZStack
+        } /// WithPerceptionTracking
     }
     
     // MARK: - Methods
@@ -80,6 +83,7 @@ struct ListView<ViewModel>: View where ViewModel: ListViewModelProtocol & Collec
 }
 
 #Preview {
-    let viewModel = ListViewModel(networkManager: NetworkManager(), navigation: NavigationManager())
-    ListView(viewModel: viewModel)
+    ListView(store: Store(initialState: ListReducer.State(), reducer: {
+        ListReducer()
+    }))
 }

@@ -1,4 +1,4 @@
-struct RepoModel: Hashable {
+struct RepoModel: Hashable, Identifiable, Codable {
     let nextUrl: String?
     let lastUrl: String?
     let id: Int

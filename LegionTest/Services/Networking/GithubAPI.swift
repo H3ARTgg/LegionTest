@@ -1,6 +1,6 @@
 import Foundation
 
-let bearerToken = ""
+let bearerToken = "" // enter your github public access token here
 
 enum GithubAPI {
     case search(search: String, nextPage: String?)
