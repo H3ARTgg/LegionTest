@@ -10,7 +10,7 @@ extension FavoritesReducer {
     
     // MARK: - DataReducer
     @Reducer
-    struct DataReducer {
+    struct DataReducer: Sendable {
         @Dependency(\.dataRepo) var dataRepo
         
         func reduce(into state: inout State, action: Action) -> Effect<Action> {

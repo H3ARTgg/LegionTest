@@ -11,7 +11,7 @@ extension ListReducer {
     
     // MARK: - UIReducer
     @Reducer
-    struct UIReducer {
+    struct UIReducer: Sendable {
         func reduce(into state: inout State, action: Action) -> Effect<Action> {
             guard case let .ui(uiAction) = action else { return .none }
             

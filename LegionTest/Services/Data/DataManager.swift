@@ -32,7 +32,7 @@ protocol DataManagerProtocol: AnyObject, Sendable {
 
 // MARK: - DataManager
 final class DataManager: DataManagerProtocol {
-    @Shared(.repos) var repos: [RepoModel] = []
+    @Shared(.repos) private var repos: [RepoModel] = []
     
     func writeRepo(_ repo: RepoModel) {
         $repos.withLock {

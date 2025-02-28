@@ -2,7 +2,7 @@ import ComposableArchitecture
 import SwiftUI
 
 @Reducer
-struct AppReducer {
+struct AppReducer: Sendable {
     // MARK: - Tab
     public enum Tab: Hashable, Equatable, Sendable, Identifiable {
         case list

@@ -4,7 +4,7 @@ extension ListReducer {
     
     // MARK: - MainReducer
     @Reducer
-    struct MainReducer {
+    struct MainReducer: Sendable {
         func reduce(into state: inout State, action: Action) -> Effect<Action> {
             switch action {
             case .searchRequest(.onStartSuccess(let items)):

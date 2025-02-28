@@ -11,7 +11,7 @@ extension DetailsReducer {
     
     // MARK: - RequestReducer
     @Reducer
-    struct RequestReducer {
+    struct RequestReducer: Sendable {
         @Dependency(\.searchRepo) var searchRepo
         
         func reduce(into state: inout State, action: Action) -> Effect<Action> {

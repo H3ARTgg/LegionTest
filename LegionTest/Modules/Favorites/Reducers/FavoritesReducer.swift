@@ -1,7 +1,7 @@
 import ComposableArchitecture
 
 @Reducer
-struct FavoritesReducer {
+struct FavoritesReducer: Sendable {
     
     // MARK: - State
     @ObservableState
